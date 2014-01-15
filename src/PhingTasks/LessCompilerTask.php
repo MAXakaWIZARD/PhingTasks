@@ -7,6 +7,8 @@
  * @license New BSD License
  */
 
+require_once dirname(__FILE__) . '/../../vendor/autoload.php';
+
 /**
  * Defines a Phing task to compile {@link http://lesscss.org LESS} syntax to
  * valid CSS.

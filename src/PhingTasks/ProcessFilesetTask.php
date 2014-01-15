@@ -7,6 +7,8 @@
  * @license New BSD License
  */
 
+require_once dirname(__FILE__) . '/../../vendor/autoload.php';
+
 /**
  * Creates the scaffolding necessary to perform a transformation on a set
  * of files and save them into a target directory.

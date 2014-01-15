@@ -7,6 +7,8 @@
  * @license New BSD License
  */
 
+require_once dirname(__FILE__) . '/../../vendor/autoload.php';
+
 /**
  * Defines a Phing task to run the YUI compressor against a set of JavaScript
  * or CSS files.
@@ -115,5 +117,4 @@ class YuiCompressorTask extends ProcessFilesetTask
             );
         }
     }
-
 }
