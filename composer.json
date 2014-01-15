@@ -1,7 +1,7 @@
 {
     "name": "maxakawizard/phing-tasks",
     "description": "Phing tasks for PHP",
-    "keywords": ["po", "gettext", "i18n", "l10n"],
+    "keywords": ["phing", "build"],
     "homepage": "http://github.com/MAXakaWIZARD/PhingTasks",
     "type": "library",
     "license": "MIT",
