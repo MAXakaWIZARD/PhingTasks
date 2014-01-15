@@ -16,7 +16,6 @@
  */
 abstract class ProcessFilesetTask extends Task
 {
-
     /**
      * @var PhingFile
      */
@@ -28,7 +27,7 @@ abstract class ProcessFilesetTask extends Task
     protected $_fileSets;
 
     /**
-     * @return void
+     *
      */
     public function __construct()
     {
@@ -86,6 +85,7 @@ abstract class ProcessFilesetTask extends Task
     /**
      * Calculate the target file path, based on $file and the target directory.
      * @param string $file The source file name.
+     * @return PhingFile
      */
     protected function _calculateTarget($file)
     {
@@ -122,6 +122,7 @@ abstract class ProcessFilesetTask extends Task
     }
 
     /**
+     * @throws BuildException
      * @return void
      */
     protected function _checkTargetDir()
@@ -133,5 +134,4 @@ abstract class ProcessFilesetTask extends Task
             );
         }
     }
-
 }

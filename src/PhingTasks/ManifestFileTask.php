@@ -71,7 +71,7 @@ class ManifestFileTask extends Task
     protected $_mode;
 
     /**
-     * @return void
+     *
      */
     public function __construct()
     {
@@ -91,6 +91,7 @@ class ManifestFileTask extends Task
     }
 
     /**
+     * @throws BuildException
      * @return void
      */
     public function main()
@@ -141,6 +142,7 @@ class ManifestFileTask extends Task
     }
 
     /**
+     * @throws BuildException
      * @return void
      */
     protected function _verifyManifest()
@@ -221,6 +223,7 @@ class ManifestFileTask extends Task
     }
 
     /**
+     * @throws BuildException
      * @return void
      */
     protected function _writeManifest()
@@ -277,6 +280,7 @@ class ManifestFileTask extends Task
     }
 
     /**
+     * @throws BuildException
      * @return void
      */
     protected function _checkAlgo()
@@ -292,6 +296,7 @@ class ManifestFileTask extends Task
     }
 
     /**
+     * @throws BuildException
      * @return void
      */
     protected function _checkFile()
@@ -303,5 +308,4 @@ class ManifestFileTask extends Task
             );
         }
     }
-
 }

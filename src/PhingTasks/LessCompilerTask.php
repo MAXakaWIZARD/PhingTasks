@@ -7,8 +7,6 @@
  * @license New BSD License
  */
 
-require_once dirname(__FILE__) . '/ProcessFilesetTask.php';
-
 /**
  * Defines a Phing task to compile {@link http://lesscss.org LESS} syntax to
  * valid CSS.
@@ -35,13 +33,12 @@ require_once dirname(__FILE__) . '/ProcessFilesetTask.php';
  */
 class LessCompilerTask extends ProcessFilesetTask
 {
-
     /**
      * @return boolean
      */
     public function init()
     {
-        $reqPath = realpath(dirname(__FILE__)) . '/../../../../../vendor/leafo/lessphp';
+        $reqPath = realpath(dirname(__FILE__)) . '/../../vendor/leafo/lessphp';
         require_once $reqPath . DIRECTORY_SEPARATOR . 'lessc.inc.php';
 
         return true;
@@ -51,6 +48,7 @@ class LessCompilerTask extends ProcessFilesetTask
      * Replaces the .less extension with .css
      *
      * @param string $file
+     * @return PhingFile
      */
     protected function _calculateTarget($file)
     {
@@ -60,6 +58,12 @@ class LessCompilerTask extends ProcessFilesetTask
         );
     }
 
+    /**
+     * @throws Exception
+     * @param PhingFile $source
+     * @param PhingFile $target
+     * @return bool
+     */
     protected function _process($source, $target)
     {
         $lessc = new lessc();

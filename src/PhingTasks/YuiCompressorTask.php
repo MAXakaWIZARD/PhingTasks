@@ -7,8 +7,6 @@
  * @license New BSD License
  */
 
-require_once dirname(__FILE__) . '/ProcessFilesetTask.php';
-
 /**
  * Defines a Phing task to run the YUI compressor against a set of JavaScript
  * or CSS files.
@@ -38,7 +36,6 @@ require_once dirname(__FILE__) . '/ProcessFilesetTask.php';
  */
 class YuiCompressorTask extends ProcessFilesetTask
 {
-
     /**
      * @var string
      */
@@ -50,7 +47,7 @@ class YuiCompressorTask extends ProcessFilesetTask
     protected $_jarPath;
 
     /**
-     * @return void
+     *
      */
     public function __construct()
     {
@@ -102,7 +99,7 @@ class YuiCompressorTask extends ProcessFilesetTask
     }
 
     /**
-     * @return void
+     * @throws BuildException
      */
     protected function _checkJarPath()
     {
