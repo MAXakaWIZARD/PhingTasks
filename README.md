@@ -7,7 +7,7 @@ This package is compliant with [PSR-0](http://www.php-fig.org/psr/0/), [PSR-1](h
 If you notice compliance oversights, please send a patch via pull request.
 
 ## Installation
-To install the Super Closure library in your project using Composer, first add the following to your `composer.json`
+To install the PhingTasks library in your project using Composer, first add the following to your `composer.json`
 config file.
 ```javascript
 {
