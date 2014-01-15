@@ -7,8 +7,6 @@
  * @license New BSD License
  */
 
-require_once dirname(__FILE__) . '/../../vendor/autoload.php';
-
 /**
  * Defines a Phing task to create or verify a manifest file. This file simply
  * contains a listing of files in the specified FileSet along with a hash sum
