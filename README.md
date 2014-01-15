@@ -1,6 +1,8 @@
 # PhingTasks
 Phing tasks for PHP. This library includes tasks by Ryan Chouinard <rchouinard@gmail.com>
+- LesscTask
 - LessCompilerTask
+- ManifestFileTask
 - YuiCompressorTask
 
 This package is compliant with [PSR-0](http://www.php-fig.org/psr/0/), [PSR-1](http://www.php-fig.org/psr/1/), and [PSR-2](http://www.php-fig.org/psr/2/).
@@ -12,7 +14,7 @@ config file.
 ```javascript
 {
     "require": {
-        "maxakawizard/phing-tasks": "dev-master"
+        "maxakawizard/phing-tasks": "~0.1"
     }
 }
 ```
