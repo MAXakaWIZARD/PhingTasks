@@ -23,10 +23,8 @@ config file.
     }
 }
 ```
-Then run Composer's install or update commands to complete installation. Please visit the [Composer homepage][1] for
+Then run Composer's install or update commands to complete installation. Please visit the [Composer homepage](http://getcomposer.org) for
 more information about how to use Composer.
 
 ## License
 This library is released under [MIT](http://www.tldrlegal.com/license/mit-license) license.
-
-[1]:  http://getcomposer.org
