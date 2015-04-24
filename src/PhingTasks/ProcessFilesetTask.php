@@ -35,14 +35,6 @@ abstract class ProcessFilesetTask extends Task
     }
 
     /**
-     * @return boolean
-     */
-    public function init()
-    {
-        return true;
-    }
-
-    /**
      * @return void
      */
     public function main()

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="PhingTasks" default="build" basedir=".">
+    <property name="ROOT_DIR" value="${phing.dir}" />
+    <property name="BUILD_DIR" value="${phing.dir}/build" />
+    <property name="TESTS_DIR" value="${phing.dir}/tests" />
+
+    <taskdef name="lessc" classname="LessCompilerTask" classpath="${ROOT_DIR}/src/PhingTasks"/>
+    <taskdef name="yuic" classname="YuiCompressorTask" classpath="${ROOT_DIR}/src/PhingTasks"/>
+
+    <target name="prepare">
+        <mkdir dir="${BUILD_DIR}" />
+        <delete file="${BUILD_DIR}/styles.css" quiet="true"/>
+        <delete file="${BUILD_DIR}/styles.min.css" quiet="true"/>
+    </target>
+
+    <target name="compile_less">
+        <echo msg="Compile LESS to CSS..." />
+        <lessc targetdir="${BUILD_DIR}">
+            <fileset dir="${TESTS_DIR}">
+                <include name="styles.less" />
+            </fileset>
+        </lessc>
+
+        <available file="${BUILD_DIR}/styles.css" property="lessCompiled" value="1"/>
+        <if>
+        <equals arg1="${lessCompiled}" arg2="1" />
+        <then>
+            <!-- successfully compiled -->
+        </then>
+        <else>
+            <fail message="Failed to compile less!" />
+        </else>
+        </if>
+    </target>
+
+    <target name="minify_css">
+        <echo msg="Minify combined css file..." />
+        <yuic targetdir="${BUILD_DIR}" suffix=".min">
+            <fileset dir="${BUILD_DIR}">
+                <include name="styles.css" />
+            </fileset>
+        </yuic>
+
+        <available file="${BUILD_DIR}/styles.min.css" property="cssMinified" value="1"/>
+        <if>
+            <equals arg1="${cssMinified}" arg2="1" />
+            <then>
+                <!-- successfully compiled -->
+            </then>
+            <else>
+                <fail message="Failed to minify css!" />
+            </else>
+        </if>
+    </target>
+
+    <target
+        name="build"
+        depends="prepare, compile_less, minify_css"/>
+</project>

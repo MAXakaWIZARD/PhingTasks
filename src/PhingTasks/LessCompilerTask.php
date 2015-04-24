@@ -36,17 +36,6 @@ require_once dirname(__FILE__) . '/ProcessFilesetTask.php';
 class LessCompilerTask extends ProcessFilesetTask
 {
     /**
-     * @return boolean
-     */
-    public function init()
-    {
-        $vendorsDir = realpath(dirname(__FILE__) . '/../../../../');
-        require_once $vendorsDir . '/leafo/lessphp/lessc.inc.php';
-
-        return true;
-    }
-
-    /**
      * Replaces the .less extension with .css
      *
      * @param string $file
