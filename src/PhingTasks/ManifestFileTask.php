@@ -71,6 +71,11 @@ class ManifestFileTask extends Task
     protected $_mode;
 
     /**
+     * @var boolean
+     */
+    protected $_verify;
+
+    /**
      *
      */
     public function __construct()
