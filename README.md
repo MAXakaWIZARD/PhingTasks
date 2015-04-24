@@ -3,6 +3,7 @@
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/MAXakaWIZARD/PhingTasks/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/MAXakaWIZARD/PhingTasks/?branch=master)
 [![Code Climate](https://codeclimate.com/github/MAXakaWIZARD/PhingTasks/badges/gpa.svg)](https://codeclimate.com/github/MAXakaWIZARD/PhingTasks)
 [![Total Downloads](https://poser.pugx.org/maxakawizard/phing-tasks/downloads.svg)](https://packagist.org/packages/maxakawizard/phing-tasks) 
+[![Minimum PHP Version](http://img.shields.io/badge/php-%3E%3D%205.3-8892BF.svg)](https://php.net/)
 [![License](https://poser.pugx.org/maxakawizard/phing-tasks/license.svg)](https://packagist.org/packages/maxakawizard/phing-tasks)
 
 Phing tasks for PHP. This library includes tasks by Ryan Chouinard <rchouinard@gmail.com>
