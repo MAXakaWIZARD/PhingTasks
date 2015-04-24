@@ -6,11 +6,13 @@
 
     <taskdef name="lessc" classname="LessCompilerTask" classpath="${ROOT_DIR}/src/PhingTasks"/>
     <taskdef name="yuic" classname="YuiCompressorTask" classpath="${ROOT_DIR}/src/PhingTasks"/>
+    <taskdef name="manifestfile" classname="ManifestFileTask" classpath="${ROOT_DIR}/src/PhingTasks"/>
 
     <target name="prepare">
         <mkdir dir="${BUILD_DIR}" />
         <delete file="${BUILD_DIR}/styles.css" quiet="true"/>
         <delete file="${BUILD_DIR}/styles.min.css" quiet="true"/>
+        <delete file="${BUILD_DIR}/manifest" quiet="true"/>
     </target>
 
     <target name="compile_less">
@@ -53,7 +55,23 @@
         </if>
     </target>
 
+    <target name="create_manifest" description="Generate a Manifest file">
+        <manifestfile file="${BUILD_DIR}/manifest">
+            <fileset dir="${TESTS_DIR}">
+                <include name="*.less" />
+            </fileset>
+        </manifestfile>
+    </target>
+
+    <target name="verify_manifest" description="Verify a Manifest file">
+        <manifestfile file="${BUILD_DIR}/manifest" mode="verify">
+            <fileset dir="${TESTS_DIR}">
+                <include name="*.less" />
+            </fileset>
+        </manifestfile>
+    </target>
+
     <target
         name="build"
-        depends="prepare, compile_less, minify_css"/>
+        depends="prepare, compile_less, minify_css, create_manifest, verify_manifest"/>
 </project>

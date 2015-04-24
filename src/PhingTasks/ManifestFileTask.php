@@ -41,7 +41,6 @@
  */
 class ManifestFileTask extends Task
 {
-
     const MODE_CREATE = 'create';
     const MODE_VERIFY = 'verify';
 
@@ -160,7 +159,7 @@ class ManifestFileTask extends Task
 
         $manifest = array ();
         $fp = fopen($this->_file, 'r');
-        while (true == ($line = trim(fgets($fp)))) {
+        while ($line = trim(fgets($fp))) {
             list ($path, $hash) = explode("\t", $line);
             $manifest[$path] = $hash;
         }
