@@ -49,6 +49,11 @@ class YuiCompressorTask extends ProcessFilesetTask
     protected $_jarPath;
 
     /**
+     * @var string
+     */
+    protected $_suffix = '';
+
+    /**
      *
      */
     public function __construct()
@@ -81,10 +86,18 @@ class YuiCompressorTask extends ProcessFilesetTask
      */
     protected function _process($source, $target)
     {
+        $sourcePath = $source->getAbsolutePath();
+        $sourceName = pathinfo($sourcePath, PATHINFO_FILENAME);
+        $sourceExt = pathinfo($sourcePath, PATHINFO_EXTENSION);
+
+        $targetDir = dirname($target->getAbsolutePath());
+        $targetPath = $targetDir . DIRECTORY_SEPARATOR;
+        $targetPath .= $sourceName . $this->_suffix . '.' . $sourceExt;
+
         $cmd = escapeshellcmd($this->_javaPath)
             . ' -jar ' . escapeshellarg($this->_jarPath)
-            . ' -o ' . escapeshellarg($target->getAbsolutePath())
-            . ' ' . escapeshellarg($source->getAbsolutePath());
+            . ' -o ' . escapeshellarg($targetPath)
+            . ' ' . escapeshellarg($sourcePath);
         $this->log('Executing: ' . $cmd, Project::MSG_DEBUG);
         @exec($cmd, $output, $return);
 
@@ -98,6 +111,15 @@ class YuiCompressorTask extends ProcessFilesetTask
     public function setJarPath(PhingFile $path)
     {
         $this->_jarPath = $path;
+    }
+
+    /**
+     * @param $suffix
+     * @return void
+     */
+    public function setSuffix($suffix)
+    {
+        $this->_suffix = $suffix;
     }
 
     /**
