@@ -40,8 +40,9 @@ class LessCompilerTask extends ProcessFilesetTask
      */
     public function init()
     {
-			$vendorsDir = realpath(dirname(__FILE__) . '/../../../../');
-			require_once $vendorsDir . '/leafo/lessphp/lessc.inc.php';
+        $vendorsDir = realpath(dirname(__FILE__) . '/../../../../');
+        require_once $vendorsDir . '/leafo/lessphp/lessc.inc.php';
+
         return true;
     }
 

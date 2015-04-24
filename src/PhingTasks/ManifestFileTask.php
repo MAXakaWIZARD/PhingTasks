@@ -108,7 +108,6 @@ class ManifestFileTask extends Task
 
         /* @var $fileSet FileSet */
         foreach ($this->_fileSets as $fileSet) {
-
             $files = $fileSet->getDirectoryScanner($this->project)
                 ->getIncludedFiles();
             $projBase = $this->project->getBasedir();

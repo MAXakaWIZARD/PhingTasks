@@ -28,7 +28,7 @@ require_once dirname(__FILE__) . '/ProcessFilesetTask.php';
  *     </target>
  *
  * This task differs from LessCompileTask in that it uses the Node.js compiler
- * that ships with the current stable less instead of a PHP port. lessc must 
+ * that ships with the current stable less instead of a PHP port. lessc must
  * be on your system path for it to work.
  * @link https://github.com/cloudhead/less.js
  */

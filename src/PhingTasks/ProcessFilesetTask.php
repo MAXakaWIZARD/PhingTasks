@@ -51,12 +51,10 @@ abstract class ProcessFilesetTask extends Task
 
         /* @var $fileSet FileSet */
         foreach ($this->_fileSets as $fileSet) {
-
             $files = $fileSet->getDirectoryScanner($this->project)
                 ->getIncludedFiles();
 
             foreach ($files as $file) {
-
                 $targetDir = new PhingFile($this->_targetDir, dirname($file));
                 if (!$targetDir->exists()) {
                     $targetDir->mkdirs();
