@@ -80,8 +80,8 @@ class ManifestFileTask extends Task
     public function __construct()
     {
         $this->_algo = 'sha256';
-        $this->_fileSets = array ();
-        $this->_hashes = array ();
+        $this->_fileSets = array();
+        $this->_hashes = array();
         $this->_mode = self::MODE_CREATE;
         $this->_verify = false;
     }
@@ -100,42 +100,11 @@ class ManifestFileTask extends Task
      */
     public function main()
     {
-        if (!extension_loaded('hash')) {
-            throw new BuildException(
-                'The hash extension must be loaded to use this task',
-                $this->location
-            );
-        }
-
+        $this->_checkHashExtension();
         $this->_checkAlgo();
         $this->_checkFile();
 
-        /* @var $fileSet FileSet */
-        foreach ($this->_fileSets as $fileSet) {
-            $files = $fileSet->getDirectoryScanner($this->project)
-                ->getIncludedFiles();
-            $projBase = $this->project->getBasedir();
-
-            foreach ($files as $file) {
-                $file = new PhingFile($fileSet->getDir($this->project), $file);
-
-                $path = realpath($file->getAbsolutePath());
-                $hash = hash_file($this->_algo, $path);
-
-                if (substr($path, 0, strlen($projBase)) == $projBase) {
-                    $path = ltrim(
-                        substr($path, strlen($projBase)),
-                        DIRECTORY_SEPARATOR
-                    );
-                }
-
-                $this->_hashes[$path] = $hash;
-            }
-            unset ($file, $path, $hash);
-        }
-        unset ($fileSet, $files, $projBase);
-
-        ksort($this->_hashes);
+        $this->_buildHashMap();
 
         if (strtolower($this->_mode) == self::MODE_VERIFY) {
             $this->_verifyManifest();
@@ -146,64 +115,139 @@ class ManifestFileTask extends Task
 
     /**
      * @throws BuildException
+     */
+    protected function _buildHashMap()
+    {
+        foreach ($this->_fileSets as $fileSet) {
+            $this->_buildFileSetHashMap($fileSet);
+        }
+
+        ksort($this->_hashes);
+    }
+
+    /**
+     * @param FileSet $fileSet
+     *
+     * @throws BuildException
+     */
+    protected function _buildFileSetHashMap($fileSet)
+    {
+        $files = $fileSet->getDirectoryScanner($this->project)
+            ->getIncludedFiles();
+        $fileSetDir = $fileSet->getDir($this->project);
+
+        foreach ($files as $file) {
+            $file = new PhingFile($fileSetDir, $file);
+            $this->_buildFileHashMap($file);
+        }
+    }
+
+    /**
+     * @param PhingFile $file
+     */
+    protected function _buildFileHashMap($file)
+    {
+        $projBase = $this->project->getBasedir();
+
+        $path = realpath($file->getAbsolutePath());
+        $hash = hash_file($this->_algo, $path);
+
+        if (substr($path, 0, strlen($projBase)) == $projBase) {
+            $path = ltrim(
+                substr($path, strlen($projBase)),
+                DIRECTORY_SEPARATOR
+            );
+        }
+
+        $this->_hashes[$path] = $hash;
+    }
+
+    /**
+     * @throws BuildException
      * @return void
      */
     protected function _verifyManifest()
     {
-        if (!$this->_file->isFile() || !$this->_file->canRead()) {
+        $this->_checkFileReadability();
+
+        $manifest = $this->_readManifest();
+
+        $verified = $this->_verifyCheckLeftSide($manifest)
+            && $this->_verifyCheckRightSide($manifest)
+            && $this->_verifyPresentHashes($manifest);
+
+        if (!$verified) {
             throw new BuildException(
-                'Failed reading from manifest file',
-                $this->location
+                'Manifest verification failed'
             );
         }
 
-        $manifest = array ();
-        $fp = fopen($this->_file, 'r');
-        while ($line = trim(fgets($fp))) {
-            list ($path, $hash) = explode("\t", $line);
-            $manifest[$path] = $hash;
-        }
-        fclose($fp);
+        $this->log('Manifest verification successful');
+    }
 
+    /**
+     * Check for files present which are not in the manifest
+     * @param $manifest
+     * @return boolean
+     */
+    protected function _verifyCheckLeftSide($manifest)
+    {
+        return $this->_compareLists(
+            $manifest,
+            $this->_hashes,
+            'There are %d files present which are not listed in the manifest',
+            'Extra file'
+        );
+    }
+
+    /**
+     * Check for files listed in the manifest which are not present
+     * @param $manifest
+     * @return boolean
+     */
+    protected function _verifyCheckRightSide($manifest)
+    {
+        return $this->_compareLists(
+            $this->_hashes,
+            $manifest,
+            'There are %d files listed in the manifest which are not present',
+            'Missing file'
+        );
+    }
+
+    /**
+     * @param $firstList
+     * @param $secondList
+     * @param $nonEqualMessage
+     * @param $listPrefix
+     *
+     * @return bool True if lists are equal
+     */
+    protected function _compareLists($firstList, $secondList, $nonEqualMessage, $listPrefix)
+    {
+        $diff = array_keys(array_diff_key($firstList, $secondList));
+        $diffCount = count($diff);
+        $equal = $diffCount == 0;
+        if (!$equal) {
+            $this->log(
+                sprintf($nonEqualMessage, $diffCount),
+                PROJECT::MSG_WARN
+            );
+            $this->_logFilesList($diff, $listPrefix);
+        }
+
+        return $equal;
+    }
+
+    /**
+     * Compare manifest hashes with the computed hashes
+     * @param $manifest
+     * @return boolean
+     */
+    protected function _verifyPresentHashes($manifest)
+    {
         $verified = true;
 
-        // Check for files present which are not in the manifest
-        $filesNotInManifest = array_keys(array_diff_key($manifest, $this->_hashes));
-        if (!empty ($filesNotInManifest)) {
-            $verified = false;
-            $this->log(
-                'There are ' . count($filesNotInManifest) . ' files present which are not listed in the manifest',
-                PROJECT::MSG_WARN
-            );
-            foreach ($filesNotInManifest as $path) {
-                $this->log(
-                    'Extra file: ' . $path,
-                    PROJECT::MSG_WARN
-                );
-            }
-            unset ($path);
-        }
-        unset ($filesNotInManifest);
-
-        // Check for files listed in the manifest which are not present
-        $filesNotPresent = array_keys(array_diff_key($this->_hashes, $manifest));
-        if (!empty ($filesNotPresent)) {
-            $verified = false;
-            $this->log(
-                'There are ' . count($filesNotPresent) . ' files listed in the manifest which are not present',
-                PROJECT::MSG_WARN
-            );
-            foreach ($filesNotPresent as $path) {
-                $this->log(
-                    'Missing file: ' . $path,
-                    PROJECT::MSG_WARN
-                );
-            }
-            unset ($path);
-        }
-        unset ($filesNotPresent);
-
-        // Compare manifest hashes with the computed hashes
         $filesPresent = array_keys(array_intersect_key($manifest, $this->_hashes));
         foreach ($filesPresent as $path) {
             if ($manifest[$path] != $this->_hashes[$path]) {
@@ -214,15 +258,38 @@ class ManifestFileTask extends Task
                 );
             }
         }
-        unset ($filesPresent);
 
-        if (!$verified) {
-            throw new BuildException(
-                'Manifest verification failed'
+        return $verified;
+    }
+
+    /**
+     * @param $files
+     * @param $messagePrefix
+     */
+    protected function _logFilesList($files, $messagePrefix)
+    {
+        foreach ($files as $path) {
+            $this->log(
+                $messagePrefix . ': ' . $path,
+                PROJECT::MSG_WARN
             );
         }
+    }
 
-        $this->log('Manifest verification successful');
+    /**
+     * @return array
+     */
+    protected function _readManifest()
+    {
+        $manifest = array();
+        $fp = fopen($this->_file, 'r');
+        while ($line = trim(fgets($fp))) {
+            list ($path, $hash) = explode("\t", $line);
+            $manifest[$path] = $hash;
+        }
+        fclose($fp);
+
+        return $manifest;
     }
 
     /**
@@ -307,6 +374,32 @@ class ManifestFileTask extends Task
         if ($this->_file === null) {
             throw new BuildException(
                 'Path to manifest file must be specified',
+                $this->location
+            );
+        }
+    }
+
+    /**
+     * @throws BuildException
+     */
+    protected function _checkFileReadability()
+    {
+        if (!$this->_file->isFile() || !$this->_file->canRead()) {
+            throw new BuildException(
+                'Failed reading from manifest file',
+                $this->location
+            );
+        }
+    }
+
+    /**
+     * @throws BuildException
+     */
+    protected function _checkHashExtension()
+    {
+        if (!extension_loaded('hash')) {
+            throw new BuildException(
+                'The hash extension must be loaded to use this task',
                 $this->location
             );
         }

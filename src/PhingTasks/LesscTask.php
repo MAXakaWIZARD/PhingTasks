@@ -84,8 +84,8 @@ class LesscTask extends ProcessFilesetTask
             . ' ' . escapeshellarg($source->getAbsolutePath())
             . ' > ' . escapeshellarg($target->getAbsolutePath());
         $this->log('Executing: ' . $cmd, Project::MSG_DEBUG);
-        @exec($cmd, $output, $return);
+        exec($cmd, $output, $return);
 
-        return true;
+        return $return === 0;
     }
 }

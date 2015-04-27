@@ -99,7 +99,7 @@ class YuiCompressorTask extends ProcessFilesetTask
             . ' -o ' . escapeshellarg($targetPath)
             . ' ' . escapeshellarg($sourcePath);
         $this->log('Executing: ' . $cmd, Project::MSG_DEBUG);
-        @exec($cmd, $output, $return);
+        exec($cmd, $output, $return);
 
         return $return === 0;
     }

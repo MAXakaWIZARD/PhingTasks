@@ -31,7 +31,7 @@ abstract class ProcessFilesetTask extends Task
      */
     public function __construct()
     {
-        $this->_fileSets = array ();
+        $this->_fileSets = array();
     }
 
     /**
